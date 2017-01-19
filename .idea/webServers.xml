@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c9e58acf-6c3f-4fd1-85e6-a62b4225bea1" name="Araya_internal" url="http://192.168.1.101">
+        <fileTransfer host="192.168.1.101" port="10222" privateKey="C:\Users\acercyc\.ssh\id_rsa" rootFolder="/home/acercyc/Project_Araya/football" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="10222" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
