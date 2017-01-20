@@ -107,6 +107,25 @@ def addPlayerBasedColumn(df):
     return df
 
 
+def addIsNewSession(d):
+    """ 
+    detect large moving distance and indicate it as the new session start 
+    1.0 - Acer 2017/01/20 17:38
+    """
+    
+    d = d.copy()
+    d_posi = d.ix[:, 'H1X':'A11Y']
+    
+    posi_diff = np.sum( abs(np.diff(d_posi, axis = 0)), axis=1 )
+    iNewSession = np.array((posi_diff > 1000).nonzero())[0]+1
+    iNewSession = np.insert(iNewSession, 0, 0)
+
+    d['isNewSession'] = 0
+    d.ix[iNewSession, 'isNewSession'] = 1
+    
+    return d
+
+
 # ---------------------------------------------------------------------------- #
 #                                                                              #
 #                                    Plotting                                  #
