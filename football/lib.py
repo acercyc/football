@@ -126,6 +126,37 @@ def addIsNewSession(d):
     return d
 
 
+def addSideChangeDist(d):
+    """
+    create a side change column
+    a column indicate how many frame will be a possession side change 
+    1.0 - Acer 2017/01/23 14:59
+    """
+    
+    # reverse possession order
+    poss_rev = d.ix[::-1,'Possession_A'].values
+
+    # change 0 to -1
+    poss_rev[poss_rev==0] = -1
+
+    # add temporal distance value
+    iFlip = np.diff(poss_rev).nonzero()[0] + 1 
+    printer = 0;
+    sideChangeDist = np.empty_like(poss_rev)
+    for i in range(len(poss_rev)):
+        if i in iFlip:
+            printer = 0
+        printer = printer + poss_rev[i]
+        sideChangeDist[i] = printer
+    
+    # reverse back
+    sideChangeDist = sideChangeDist[::-1] 
+
+    d['sideChangeDist_by_A'] = sideChangeDist
+    
+    return d
+
+
 # ---------------------------------------------------------------------------- #
 #                                                                              #
 #                                    Plotting                                  #
@@ -163,11 +194,18 @@ def plot_moving(d, timeStep=5):
         ax.cla()
 
 
-def plot_moving_playerBased(d, timeStep=5):
+def plot_moving_playerBased(d, timeStep=5, isPlotSessionBreak = False):
     """ Player based moving presentation """
     plt.ion()
     fig = plt.figure()
     ax = fig.add_subplot(111)
+    
+    if isPlotSessionBreak:
+        ns = d.isNewSession
+        ns_t = ns
+        for i in range(100):
+            ns_t = np.roll(ns_t, -1)
+            ns = ns + ns_t * (i+1)
 
     for i in range(0, d.shape[0], timeStep):
         # team H
@@ -183,9 +221,20 @@ def plot_moving_playerBased(d, timeStep=5):
         # ball
         ax.plot(d['BX'][i], d['BY'][i], 'ks', markersize=(d['BZ'][i]) / 5 + 10, fillstyle='none')
         ax.plot(d['BX'][i], d['BY'][i], 'k^', markersize=5, fillstyle='none')
+        
+        #raise Exception('sss')
+        
+        if isPlotSessionBreak:
+            if ns[i] > 0:
+                ax.plot(np.array([dataInfo.fieldSize_x[0], dataInfo.fieldSize_x[0] + ns[i]*30]) + 10,
+                        np.array([dataInfo.fieldSize_y[0], dataInfo.fieldSize_y[0]]) + 10,
+                        'g', linewidth = 10)
 
         ax.set_xlim(dataInfo.fieldSize_x)
         ax.set_ylim(dataInfo.fieldSize_y)
 
         fig.canvas.draw()
         ax.cla()
+        
+        
+        

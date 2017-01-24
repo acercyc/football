@@ -9,3 +9,4 @@
 import os
 dispPort = !echo $DISPLAY
 os.environ['DISPLAY'] = dispPort[0]
+
