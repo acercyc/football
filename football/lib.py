@@ -12,6 +12,8 @@ import numpy as np
 import sys
 from . import dataInfo
 import matplotlib.pyplot as plt
+import os
+import re
 
 
 # ---------------------------------------------------------------------------- #
@@ -27,6 +29,20 @@ def read_csv_tar(iFile):
     df = pd.read_csv(f)
 
     return df
+
+
+def read_csv_by_index(iFile):
+    fNames = os.listdir('valid_data')
+    iFName = [True if re.search('\d+.csv', x) else False for x in fNames]
+    fNames = np.array(fNames)[np.array(iFName)]
+    fNames = fNames[np.array(iFile)]
+
+    d = pd.DataFrame()
+    for fName in fNames:
+        print(fName)
+        d = d.append(pd.read_csv('valid_data/' + fName))
+
+    return d
 
 
 # ---------------------------------------------------------------------------- #
